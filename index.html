@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08080a">
+  <meta name="description" content="OpenDrop — Supercharged, ultra-fast peer-to-peer file transfer. No cloud, no limits, no installs. Complete privacy and local speeds.">
+  
+  <title>OpenDrop — Next-Gen P2P File Sharing</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="index.html" class="nav-brand">
+      <span>OpenDrop</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#how" class="nav-link">How It Works</a>
+      <a href="#features" class="nav-link">Upgrades</a>
+      <a href="#stats" class="nav-link">Statistics</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="theme-toggle" title="Toggle Light/Dark Theme">🌙</button>
+      <a href="app.html" class="btn accent">Open App ↗</a>
+    </div>
+  </header>
+
+  <!-- Landing Container -->
+  <main class="landing-container">
+    
+    <!-- Hero Section -->
+    <section class="hero-sec">
+      <div class="hero-left">
+        <div class="hero-tag">// Supercharged local mesh</div>
+        <h1 class="hero-title">Share files <span>directly</span> between devices. No cloud.</h1>
+        <p class="hero-subtitle">OpenDrop establishes direct, secure connection channels between your laptop, mobile phone, and tablets. Unlock maximum transfer speeds without any data touching the cloud.</p>
+        
+        <div class="hero-pills">
+          <span class="pill">⚡ 30-80+ Mbps Local Speed</span>
+          <span class="pill">🔒 Zero-Cloud E2E Encrypted</span>
+          <span class="pill">📱 Cross-Device NAT Bypassed</span>
+          <span class="pill">🔑 No Signups, Installs or limits</span>
+        </div>
+
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+          <a href="app.html" class="btn accent" style="padding: 0.8rem 1.75rem; font-size: 1.05rem;">Start File Sharing Now ↗</a>
+          <a href="#how" class="btn" style="padding: 0.8rem 1.75rem; font-size: 1.05rem;">Explore Features</a>
+        </div>
+      </div>
+
+      <!-- Interactive WebRTC Mock Simulator Card -->
+      <div class="glass-panel sim-card" id="simulator-card">
+        <div class="sim-screen">
+          <div class="sim-devices">
+            <!-- Sender Laptop -->
+            <div class="sim-device laptop">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
+              </svg>
+              <p>Macbook Pro</p>
+            </div>
+
+            <!-- Connection Path -->
+            <div class="sim-connection-path"></div>
+            <div class="sim-particle" id="sim-particle"></div>
+
+            <!-- Receiver Phone -->
+            <div class="sim-device phone">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+              </svg>
+              <p>iPhone 15 Pro</p>
+            </div>
+          </div>
+
+          <!-- Progress Block -->
+          <div class="sim-progress-block">
+            <div class="sim-meta">
+              <span id="sim-filename">Select simulation…</span>
+              <span id="sim-percentage">0%</span>
+            </div>
+            <div class="sim-progress-track">
+              <div class="sim-progress-fill" id="sim-progress-fill"></div>
+            </div>
+            <div class="sim-stats">
+              <span id="sim-transferred">0.0 MB / 0.0 MB</span>
+              <span class="sim-speed" id="sim-speed">0.0 Mbps</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn accent" id="sim-btn" style="width: 100%; margin-top: 1.5rem; justify-content: center;">
+          ⚡ Simulate P2P Transfer
+        </button>
+      </div>
+    </section>
+
+    <!-- Upgrades Section -->
+    <section class="features-sec" id="features">
+      <div class="section-hdr">
+        <span class="section-tag">// Core Upgrades</span>
+        <h2 class="section-h">The OpenDrop Difference</h2>
+      </div>
+
+      <div class="features-grid">
+        <!-- Speed -->
+        <div class="glass-panel feature-card">
+          <div class="f-icon">🚀</div>
+          <h3 class="f-title">Supercharged Speed</h3>
+          <p class="f-desc">By bypassing standard text-based network translation protocols, OpenDrop streams raw, unmodified binary blocks directly between devices. Reach true network hardware speeds up to 10x-20x faster.</p>
+        </div>
+
+        <!-- Stable Connections -->
+        <div class="glass-panel feature-card">
+          <div class="f-icon">🌐</div>
+          <h3 class="f-title">Stable NAT Traversals</h3>
+          <p class="f-desc">We integrated Google's global routing beacons (STUN/ICE servers) directly into our engine, allowing cellular and Wi-Fi networks to bypass closed firewalls and form a complete WebRTC mesh connection.</p>
+        </div>
+
+        <!-- Room Security -->
+        <div class="glass-panel feature-card">
+          <div class="f-icon">🔒</div>
+          <h3 class="f-title">Admin Gate Control</h3>
+          <p class="f-desc">Tackle security head-on. As the room admin, lock room entries instantly to block any uninvited guests. Seamless auto-handoff delegates administration controls if you leave.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="glass-panel stats-bar" id="stats">
+      <div class="stat-item">
+        <div class="stat-v">30-80+</div>
+        <div class="stat-l">Mbps transfer rates</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-v">E2EE</div>
+        <div class="stat-l">DTLS/SRTP Encryption</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-v">Zero</div>
+        <div class="stat-l">Cloud footprint</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-v">15</div>
+        <div class="stat-l">Max mesh devices</div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="features-sec" id="how" style="margin-bottom: 3rem;">
+      <div class="section-hdr">
+        <span class="section-tag">// Simplified Steps</span>
+        <h2 class="section-h">Three Simple Actions</h2>
+      </div>
+
+      <div class="features-grid">
+        <div class="glass-panel feature-card" style="text-align: center; align-items: center;">
+          <div class="f-icon" style="background: rgba(255,255,255,0.03); border-color: var(--border-glass); color: #fff;">🚪</div>
+          <h3 class="f-title">1. Create a Room</h3>
+          <p class="f-desc" style="font-size: 0.85rem;">Generate an adjective-noun-number room code on our PWA app, or write your own. No email or signup needed.</p>
+        </div>
+        <div class="glass-panel feature-card" style="text-align: center; align-items: center;">
+          <div class="f-icon" style="background: rgba(255,255,255,0.03); border-color: var(--border-glass); color: #fff;">🔗</div>
+          <h3 class="f-title">2. Share Code / QR</h3>
+          <p class="f-desc" style="font-size: 0.85rem;">Scan the glassmorphic room QR code on mobile devices or share the secure link with laptop peers.</p>
+        </div>
+        <div class="glass-panel feature-card" style="text-align: center; align-items: center;">
+          <div class="f-icon" style="background: rgba(255,255,255,0.03); border-color: var(--border-glass); color: #fff;">📤</div>
+          <h3 class="f-title">3. Drag, Drop & Stream</h3>
+          <p class="f-desc" style="font-size: 0.85rem;">Drop files into the dashboard zone and approve high-speed, secure downloads on receiving browsers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-logo">OpenDrop</div>
+      <p>Secure peer-to-peer sharing. 100% decentralized local WebRTC mesh connections.</p>
+      <div class="footer-nav">
+        <a href="#how">How it works</a>
+        <a href="app.html">Launch Application</a>
+        <a href="https://github.com/Utkarsh7106/opendrop" target="_blank">Original GitHub</a>
+      </div>
+      <p style="margin-top: 1rem; font-size: 0.8rem;">Designed and Developed by Utkarsh Mishra &copy; 2026. Antigravity Peer Engine v3.0.</p>
+    </footer>
+
+  </main>
+
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn.onclick = () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('od_premium_theme', next);
+      themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+    };
+    
+    // Auto sync theme on load
+    const savedTheme = localStorage.getItem('od_premium_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+    // Interactive WebRTC Simulator
+    const simBtn = document.getElementById('sim-btn');
+    const particle = document.getElementById('sim-particle');
+    const fill = document.getElementById('sim-progress-fill');
+    const simFilename = document.getElementById('sim-filename');
+    const simPercentage = document.getElementById('sim-percentage');
+    const simTransferred = document.getElementById('sim-transferred');
+    const simSpeed = document.getElementById('sim-speed');
+
+    let simulating = false;
+
+    simBtn.onclick = () => {
+      if (simulating) return;
+      simulating = true;
+      simBtn.disabled = true;
+      simBtn.textContent = 'Streaming data…';
+
+      simFilename.textContent = 'vacation_movie_4K.mp4';
+      particle.classList.add('active');
+
+      const totalSize = 250 * 1024 * 1024; // 250 MB
+      let sent = 0;
+      const startTime = Date.now();
+
+      const runInterval = setInterval(() => {
+        // Increment sent bytes dynamically targeting local speed ranges (e.g. 5.5 MB per tick)
+        const speedMBs = 40 + Math.random() * 20; // 40-60 MB/s
+        sent += speedMBs * 1024 * 1024 * 0.1; // 100ms ticks
+
+        if (sent >= totalSize) {
+          sent = totalSize;
+          clearInterval(runInterval);
+          particle.classList.remove('active');
+          fill.style.width = '100%';
+          simPercentage.textContent = '100%';
+          simTransferred.textContent = '250.0 MB / 250.0 MB';
+          simSpeed.textContent = 'Sent ✓';
+          simBtn.textContent = 'Transfer Complete!';
+          
+          setTimeout(() => {
+            simFilename.textContent = 'Select simulation…';
+            fill.style.width = '0%';
+            simPercentage.textContent = '0%';
+            simTransferred.textContent = '0.0 MB / 0.0 MB';
+            simSpeed.textContent = '0.0 Mbps';
+            simBtn.textContent = '⚡ Simulate P2P Transfer';
+            simBtn.disabled = false;
+            simulating = false;
+          }, 3000);
+        } else {
+          const pct = Math.round((sent / totalSize) * 100);
+          fill.style.width = `${pct}%`;
+          simPercentage.textContent = `${pct}%`;
+          simTransferred.textContent = `${(sent / (1024 * 1024)).toFixed(1)} MB / 250.0 MB`;
+          simSpeed.textContent = `${(speedMBs * 8).toFixed(1)} Mbps`; // convert to bits
+        }
+      }, 100);
+    };
+  </script>
+
+</body>
+</html>

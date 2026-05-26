@@ -1,0 +1,20 @@
+{
+  "name": "OpenDrop",
+  "short_name": "OpenDrop",
+  "description": "Supercharged, secure peer-to-peer file and text transfer. No cloud, no limits, no installs.",
+  "start_url": "/app.html",
+  "display": "standalone",
+  "background_color": "#080809",
+  "theme_color": "#080809",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "lang": "en"
+}

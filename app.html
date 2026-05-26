@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08080a">
+  <meta name="description" content="OpenDrop Dashboard — Supercharged P2P local connection room. Lock sessions, view live mesh visualizer and transfer files instantly.">
+  
+  <title>OpenDrop — File Exchange Room</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  
+  <!-- CDNs for WebRTC & QR Codes -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="navbar">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" class="nav-brand"><span>OpenDrop</span></a>
+      <span class="pill" id="admin-badge" style="display: none; background: rgba(45, 212, 191, 0.1); border-color: rgba(45, 212, 191, 0.2); color: var(--accent-primary); font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">👑 Admin</span>
+    </div>
+    <div class="nav-actions">
+      <!-- Status Indicator Pill -->
+      <div class="status-indicator disconnected">
+        <span class="status-pulse" id="status-pulse"></span>
+        <span class="status-lbl" id="status-label">Enter a room code and connect</span>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" title="Toggle Light/Dark Theme">🌙</button>
+      <button class="btn destructive" id="disconnect-btn" style="display: none;">Leave Room</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- Encryption Banner -->
+    <div class="encryption-banner">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      <span>End-to-End Encrypted (DTLS/SRTP) · All transmissions flow directly between peer hardware paths.</span>
+    </div>
+
+    <!-- Step 1: Entrance Card -->
+    <section class="glass-panel entrance-card" id="entrance-view">
+      <div class="entrance-hdr">
+        <h2 class="entrance-logo"><span>OpenDrop</span> Rooms</h2>
+        <p class="entrance-desc">Create a secure space or enter a peer code to join</p>
+      </div>
+
+      <div class="entrance-form">
+        <!-- Nickname -->
+        <div class="input-grp">
+          <label for="username-input">Your Display Nickname</label>
+          <input class="form-input" id="username-input" type="text" placeholder="e.g. Maverick" maxlength="20" autocomplete="off" spellcheck="false">
+        </div>
+
+        <!-- Room Code -->
+        <div class="input-grp">
+          <label for="room-input">Room Code</label>
+          <div class="room-input-row">
+            <input class="form-input" id="room-input" type="text" placeholder="e.g. swift-lion-432" autocomplete="off" spellcheck="false">
+            <button class="btn" id="random-btn" title="Generate Random Code">🎲</button>
+          </div>
+        </div>
+
+        <button class="btn accent" id="connect-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem; font-size: 1rem;">
+          Connect to Space ↗
+        </button>
+
+        <!-- Saved Rooms list -->
+        <div class="saved-rooms">
+          <h4>Recent Rooms</h4>
+          <div class="saved-room-list" id="recent-rooms-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Customizable Signaling Config -->
+        <div class="saved-rooms" style="border-top: 1px solid var(--border-glass); padding-top: 1.25rem;">
+          <div class="config-toggle" id="config-toggle">
+            <span>🔧 Custom Signaling Server (Optional)</span>
+            <span>▼</span>
+          </div>
+          <div class="config-body" id="config-body">
+            <div class="config-grid">
+              <div class="input-grp">
+                <label for="cfg-host">Host Address</label>
+                <input class="form-input" id="cfg-host" type="text" placeholder="opendrop-peer-production.up.railway.app">
+              </div>
+              <div class="input-grp">
+                <label for="cfg-port">Port</label>
+                <input class="form-input" id="cfg-port" type="number" placeholder="443" min="1" max="65535">
+              </div>
+            </div>
+            <div class="config-grid">
+              <div class="input-grp">
+                <label for="cfg-path">Path</label>
+                <input class="form-input" id="cfg-path" type="text" placeholder="/">
+              </div>
+              <div class="input-grp">
+                <label for="cfg-secure">Secure (SSL)</label>
+                <select class="form-input" id="cfg-secure">
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div>
+            </div>
+            <div class="text-actions-bar" style="margin-top: 0.5rem;">
+              <button class="btn" id="cfg-reset-btn" style="font-size: 0.8rem;">Reset</button>
+              <button class="btn accent" id="cfg-save-btn" style="font-size: 0.8rem;">Apply Settings</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Step 2: Room View Layout -->
+    <section class="room-layout" id="room-view" style="display: none;">
+      
+      <!-- Room Sidebar -->
+      <aside class="room-sidebar">
+        
+        <!-- Info Card -->
+        <div class="glass-panel room-info-card">
+          <div class="room-code-display">
+            <span class="code-title">Space Code (Copy to share)</span>
+            <div class="code-badge" id="code-badge">—</div>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center;">Other devices must join this exact room to connect.</p>
+        </div>
+
+        <!-- 60 FPS Canvas Mesh Visualizer -->
+        <div class="glass-panel mesh-card">
+          <div class="mesh-hdr">
+            <h3>P2P Mesh Network</h3>
+            <span class="mesh-count" id="mesh-count">0 connected</span>
+          </div>
+          <div class="mesh-canvas-container">
+            <canvas class="mesh-canvas" id="mesh-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Admin Controls Panel (Host only) -->
+        <div class="glass-panel admin-card" id="admin-card" style="display: none;">
+          <div class="admin-header">
+            <h3>Admin Dashboard</h3>
+            <span class="admin-badge">Lock Controls</span>
+          </div>
+
+          <!-- Room Lock Toggle -->
+          <div class="admin-row">
+            <label>Security Gate</label>
+            <div class="admin-toggle-btn" id="lock-toggle-btn">
+              <span style="font-size: 0.85rem; font-weight: 600;">Lock Entry Doors</span>
+              <div class="admin-toggle-indicator"></div>
+            </div>
+          </div>
+
+          <!-- Rules -->
+          <div class="admin-row">
+            <label for="file-rule-select">Who can share files</label>
+            <select class="form-input" id="file-rule-select" style="padding: 0.5rem; background: rgba(0,0,0,0.15);">
+              <option value="all">Everyone</option>
+              <option value="host">Host Only</option>
+              <option value="none">Nobody</option>
+            </select>
+          </div>
+
+          <div class="admin-row">
+            <label for="text-rule-select">Who can share clipboard</label>
+            <select class="form-input" id="text-rule-select" style="padding: 0.5rem; background: rgba(0,0,0,0.15);">
+              <option value="all">Everyone</option>
+              <option value="host">Host Only</option>
+              <option value="none">Nobody</option>
+            </select>
+          </div>
+
+          <div class="admin-row">
+            <label for="max-size-input">Max file size limit (MB)</label>
+            <input class="form-input" id="max-size-input" type="number" placeholder="No limit" style="padding: 0.5rem; background: rgba(0,0,0,0.15);">
+          </div>
+
+          <!-- File permission Badge -->
+          <div class="admin-row">
+            <label>Recipient Approval</label>
+            <div class="admin-toggle-btn active" id="perm-toggle-btn">
+              <span style="font-size: 0.85rem; font-weight: 600;">Require Approval Badge</span>
+              <div class="admin-toggle-indicator"></div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- Main Interaction Panel -->
+      <article class="room-main">
+        
+        <!-- Files or Clipboard Tabs -->
+        <div class="tabs-header">
+          <button class="tab-trigger active" id="tab-files-btn">File Exchange</button>
+          <button class="tab-trigger" id="tab-text-btn">Clipboard Sync</button>
+        </div>
+
+        <!-- Pane: File Upload and Sharing -->
+        <div class="tab-pane active" id="pane-files">
+          <div class="glass-panel dropzone-card" id="dropzone">
+            <input type="file" class="hidden-file-input" id="file-input" multiple>
+            <span class="dropzone-icon">📤</span>
+            <h3 class="dropzone-title">Drop your files here</h3>
+            <p class="dropzone-desc">or click to browse local files (Supports up to 50 GB transfers)</p>
+          </div>
+        </div>
+
+        <!-- Pane: Clipboard / Text Sharing -->
+        <div class="tab-pane" id="pane-text">
+          <div class="glass-panel text-pane-content" style="padding: 1.5rem;">
+            <textarea class="form-input textarea-box" id="text-input-area" placeholder="Type or paste text content here to share across connected devices…"></textarea>
+            <div class="text-actions-bar">
+              <button class="btn" id="paste-text-btn">📋 Paste</button>
+              <button class="btn accent" id="send-text-btn">Share Clipboard ↗</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Warnings & Warnings (Auto-handled alerts) -->
+        <div class="alert-banner" id="mobile-warning" style="display: none;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span><strong>Platform Alert:</strong> Mobile browsers enforce strict RAM limits. We recommend transfers under ~500 MB to prevent tab memory crashes. Keep your screen active.</span>
+        </div>
+
+        <!-- Activity Log -->
+        <section class="glass-panel activity-card">
+          <div class="activity-hdr">
+            <h3>Live Activity</h3>
+            <button class="activity-clear" id="activity-clear">Clear Logs</button>
+          </div>
+
+          <div class="activity-list" id="activity-list">
+            <!-- Empty state -->
+            <div class="activity-empty" id="activity-empty">
+              No files or clipboards shared yet in this room
+            </div>
+          </div>
+        </section>
+
+      </article>
+
+    </section>
+
+  </main>
+
+  <!-- Modal overlay: QR Room Code Scanning -->
+  <div class="modal-overlay" id="qr-modal">
+    <div class="glass-panel modal-content" onclick="event.stopPropagation()">
+      <h3 class="modal-title">Scan QR to Join Space</h3>
+      
+      <!-- Canvas container -->
+      <div class="qr-canvas-holder" id="qr-canvas-holder"></div>
+      
+      <div class="modal-room-lbl" id="modal-room-lbl">—</div>
+      
+      <p style="font-size: 0.8rem; color: var(--text-secondary); text-align: center; max-width: 260px; line-height: 1.4;">
+        Scan this code using another device's camera to enter the room instantly.
+      </p>
+      
+      <button class="btn qr-modal-close" id="qr-modal-close">Close Overlay</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/webrtc.js"></script>
+  <script src="js/stream.js"></script>
+  <script src="js/ui.js"></script>
+
+  <!-- App Bootstrap Handler -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Boot PWA assets caching
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('OpenDrop PWA service worker registered.'))
+          .catch(err => console.warn('PWA Service worker failed to register.', err));
+      }
+
+      // Check Notification permission
+      if (typeof Notification !== 'undefined') {
+        Notification.requestPermission();
+      }
+
+      // Boot application UI logic
+      OpenDropUI.bootstrap();
+
+      // Deep link room detection
+      const queryParams = new URLSearchParams(window.location.search);
+      const deepRoom = queryParams.get('room');
+      if (deepRoom) {
+        const roomInput = document.getElementById('room-input');
+        if (roomInput) {
+          roomInput.value = deepRoom;
+          // Trigger connection after short UI settle
+          setTimeout(() => {
+            const connectBtn = document.getElementById('connect-btn');
+            if (connectBtn) connectBtn.click();
+          }, 600);
+        }
+      }
+
+      // Proactively handle mobile platform banners
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        const warning = document.getElementById('mobile-warning');
+        if (warning) warning.style.display = 'flex';
+      }
+
+      // Handle beforeunload to disconnect peer gracefully
+      window.addEventListener('beforeunload', () => {
+        OpenDropWebRTC.disconnectRoom();
+      });
+    });
+  </script>
+
+</body>
+</html>
